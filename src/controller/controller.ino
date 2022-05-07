@@ -8,7 +8,7 @@
 
 extern "C" homekit_server_config_t config;
 extern "C" void accessory_init();
-extern "C" void motion_sensor_1_callback(uint8_t status);
+extern "C" void update_switch(uint8_t port, uint8_t state);
 
 #define PIN_BUTTON D5
 
@@ -40,9 +40,13 @@ void setup() {
     printf("Button %d Event: %s\n", id, ESPButton.getButtonEventDescription(event));
 
     if (event == ESPBUTTONEVENT_SINGLECLICK) {
-      motion_sensor_1_callback(1);
+      update_switch(7, 1);
     }
-    
+
+     if (event == ESPBUTTONEVENT_DOUBLECLICK) {
+      update_switch(7, 0);
+    }
+
     if (event == ESPBUTTONEVENT_LONGCLICK) {
       printf("Cleanning and rebooting...\n");
       wifiManager.resetSettings();
@@ -67,7 +71,7 @@ void loop() {
   const uint32_t t = millis();
 
   if (t > next_heap_millis) {
-    next_heap_millis = t + 10 * 1000;
+    next_heap_millis = t + 1800 * 1000;
     printf("Free heap: %d, HomeKit clients: %d\n", ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
   }
 
