@@ -5,12 +5,20 @@
 #include <ESP8266WebServer.h>
 #include <DNSServer.h>
 #include <WiFiManager.h>
+#include "Mux.h"
+
+using namespace admux;
 
 extern "C" homekit_server_config_t config;
 extern "C" void accessory_init();
 extern "C" void update_switch(uint8_t port, uint8_t state);
 
-#define PIN_BUTTON D5
+
+#define BIT(n,i) (n>>i&1)
+
+#define PIN_BUTTON D2
+
+Mux mux(Pin(A0, INPUT, PinType::Analog), Pinset(D7, D6, D5, D4));
 
 static uint32_t next_heap_millis = 0;
 static uint32_t next_wifi_check_millis = 0;
@@ -70,11 +78,6 @@ void loop() {
 
   const uint32_t t = millis();
 
-  if (t > next_heap_millis) {
-    next_heap_millis = t + 1800 * 1000;
-    printf("Free heap: %d, HomeKit clients: %d\n", ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
-  }
-
   if (t > next_wifi_check_millis) {
     next_wifi_check_millis = t + 10 * 1000;
 
@@ -93,4 +96,19 @@ void loop() {
       ESP.restart();
     }
   }
+
+  for (uint8_t i = 0; i < 16; i++) {
+    int bit_0 = BIT(i, 0);
+    int bit_1 = BIT(i, 1);
+    int bit_2 = BIT(i, 2);
+    int bit_3 = BIT(i, 3);
+
+    printf("Port %i%i%i%i, %d content: %d\n", bit_3, bit_2, bit_1, bit_0, i+1, mux.read(i));
+  }
+  
+  if (t > next_heap_millis) {
+    next_heap_millis = t + 1800 * 1000;
+    printf("Free heap: %d, HomeKit clients: %d\n", ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
+  }
+
 }
