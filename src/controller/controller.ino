@@ -5,25 +5,51 @@
 #include <ESP8266WebServer.h>
 #include <DNSServer.h>
 #include <WiFiManager.h>
-#include "Mux.h"
 
-using namespace admux;
+#define PIN_BUTTON 0
+
+#define MUX_S0 13
+#define MUX_S1 12
+#define MUX_S2 14
+#define MUX_S3 4
 
 extern "C" homekit_server_config_t config;
 extern "C" void accessory_init();
 extern "C" void update_switch(uint8_t port, uint8_t state);
+extern "C" void update_motion_sensor(uint8_t port, uint8_t state);
 
+static uint8_t  motion_sensor_states[6] = { 0, 0, 0, 0, 0, 0 };
+static uint8_t  switch_states[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-#define BIT(n,i) (n>>i&1)
+static int mux_control_pin[] = {MUX_S0, MUX_S1, MUX_S2, MUX_S3};
 
-#define PIN_BUTTON D2
-
-Mux mux(Pin(A0, INPUT, PinType::Analog), Pinset(D7, D6, D5, D4));
+static int mux_channel[16][4]={
+    {0,0,0,0}, //channel 0
+    {1,0,0,0}, //channel 1
+    {0,1,0,0}, //channel 2
+    {1,1,0,0}, //channel 3
+    {0,0,1,0}, //channel 4
+    {1,0,1,0}, //channel 5
+    {0,1,1,0}, //channel 6
+    {1,1,1,0}, //channel 7
+    {0,0,0,1}, //channel 8
+    {1,0,0,1}, //channel 9
+    {0,1,0,1}, //channel 10
+    {1,1,0,1}, //channel 11
+    {0,0,1,1}, //channel 12
+    {1,0,1,1}, //channel 13
+    {0,1,1,1}, //channel 14
+    {1,1,1,1}  //channel 15
+  };
 
 static uint32_t next_heap_millis = 0;
 static uint32_t next_wifi_check_millis = 0;
-static bool last_wifi_state = false;
-static uint8_t wifi_connection_errors = 1;
+static uint32_t next_motion_sensors_check_millis = 0;
+static bool     last_wifi_state = false;
+static uint8_t  wifi_connection_errors = 1;
+
+
+
 
 WiFiManager wifiManager;
 
@@ -32,6 +58,16 @@ WiFiManager wifiManager;
 //----------------------------------
 void setup() {
   Serial.begin(115200);
+
+  pinMode(MUX_S0, OUTPUT);
+  pinMode(MUX_S1, OUTPUT);
+  pinMode(MUX_S2, OUTPUT);
+  pinMode(MUX_S3, OUTPUT);
+
+  digitalWrite(MUX_S0, LOW);
+  digitalWrite(MUX_S1, LOW);
+  digitalWrite(MUX_S2, LOW);
+  digitalWrite(MUX_S3, LOW);
 
   wifiManager.setConfigPortalTimeout(120);
   if(!wifiManager.autoConnect("Rancho P&R - Smart Sensor")) {
@@ -66,6 +102,7 @@ void setup() {
       ESP.restart();
     }
   });
+
   ESPButton.begin();
 
   accessory_init();
@@ -73,9 +110,6 @@ void setup() {
 }
 
 void loop() {
-  ESPButton.loop();
-  arduino_homekit_loop();
-
   const uint32_t t = millis();
 
   if (t > next_wifi_check_millis) {
@@ -98,17 +132,41 @@ void loop() {
   }
 
   for (uint8_t i = 0; i < 16; i++) {
-    int bit_0 = BIT(i, 0);
-    int bit_1 = BIT(i, 1);
-    int bit_2 = BIT(i, 2);
-    int bit_3 = BIT(i, 3);
-
-    printf("Port %i%i%i%i, %d content: %d\n", bit_3, bit_2, bit_1, bit_0, i+1, mux.read(i));
+//    printf("Port %d content: %d.\n", i+1, read_mux(i));
+//    read_mux(i);
+//    int port_content = readMux(i);
+//     int port_content = readMux(i);
+//    // Motion Sensor
+//    if( i <= 5) {
+//      int state = motion_sensor_state(port_content);
+//      if(motion_sensor_states[i] != state) {
+//        update_motion_sensor(i, state);
+//        motion_sensor_states[i] = state;
+//      }
+//    }
   }
-  
+
   if (t > next_heap_millis) {
     next_heap_millis = t + 1800 * 1000;
     printf("Free heap: %d, HomeKit clients: %d\n", ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
   }
 
+  ESPButton.loop();
+  arduino_homekit_loop();
+}
+
+
+int read_mux(int channel){
+  for(int i = 0; i < 4; i ++){
+    digitalWrite(mux_control_pin[i], mux_channel[channel][i]);
+  }
+  return analogRead(A0);
+}
+
+int motion_sensor_state(int val) {
+  if( val > 512) {
+    return 0;
+  } else {
+    return 1;
+  }
 }
