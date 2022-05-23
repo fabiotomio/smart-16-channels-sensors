@@ -88,7 +88,7 @@ bool update_switch_state_and_check_diff(uint8_t port, uint8_t state) {
   }
 }
 
-void switch_1_on_set(homekit_value_t value) {
+void switch_6_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -96,7 +96,7 @@ void switch_1_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(6, value.bool_value ? 1 : 0);
 }
 
-void switch_2_on_set(homekit_value_t value) {
+void switch_7_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -104,7 +104,7 @@ void switch_2_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(7, value.bool_value ? 1 : 0);
 }
 
-void switch_3_on_set(homekit_value_t value) {
+void switch_8_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -112,7 +112,7 @@ void switch_3_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(8, value.bool_value ? 1 : 0);
 }
 
-void switch_4_on_set(homekit_value_t value) {
+void switch_9_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -120,7 +120,7 @@ void switch_4_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(9, value.bool_value ? 1 : 0);
 }
 
-void switch_5_on_set(homekit_value_t value) {
+void switch_10_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -128,7 +128,7 @@ void switch_5_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(10, value.bool_value ? 1 : 0);
 }
 
-void switch_6_on_set(homekit_value_t value) {
+void switch_11_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -136,7 +136,7 @@ void switch_6_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(11, value.bool_value ? 1 : 0);
 }
 
-void switch_7_on_set(homekit_value_t value) {
+void switch_12_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -144,7 +144,7 @@ void switch_7_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(12, value.bool_value ? 1 : 0);
 }
 
-void switch_8_on_set(homekit_value_t value) {
+void switch_13_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -152,7 +152,7 @@ void switch_8_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(13, value.bool_value ? 1 : 0);
 }
 
-void switch_9_on_set(homekit_value_t value) {
+void switch_14_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -160,7 +160,7 @@ void switch_9_on_set(homekit_value_t value) {
   update_switch_state_and_check_diff(14, value.bool_value ? 1 : 0);
 }
 
-void switch_10_on_set(homekit_value_t value) {
+void switch_15_on_set(homekit_value_t value) {
   if (value.format != homekit_format_bool) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
@@ -169,71 +169,46 @@ void switch_10_on_set(homekit_value_t value) {
 }
 
 
-homekit_value_t switch_1_on_get() {
-  return HOMEKIT_BOOL(port_state[7]);
-}
-
-homekit_value_t switch_2_on_get() {
-  return HOMEKIT_BOOL(port_state[8]);
-}
-
-homekit_value_t switch_3_on_get() {
-  return HOMEKIT_BOOL(port_state[9]);
-}
-
-homekit_value_t switch_4_on_get() {
-  return HOMEKIT_BOOL(port_state[10]);
-}
-
-homekit_value_t switch_5_on_get() {
-  return HOMEKIT_BOOL(port_state[11]);
-}
-
 homekit_value_t switch_6_on_get() {
-  return HOMEKIT_BOOL(port_state[12]);
+  return HOMEKIT_BOOL(port_state[6]);
 }
 
 homekit_value_t switch_7_on_get() {
-  return HOMEKIT_BOOL(port_state[13]);
+  return HOMEKIT_BOOL(port_state[7]);
 }
 
 homekit_value_t switch_8_on_get() {
-  return HOMEKIT_BOOL(port_state[14]);
+  return HOMEKIT_BOOL(port_state[8]);
 }
 
 homekit_value_t switch_9_on_get() {
-  return HOMEKIT_BOOL(port_state[15]);
+  return HOMEKIT_BOOL(port_state[9]);
 }
 
 homekit_value_t switch_10_on_get() {
-  return HOMEKIT_BOOL(port_state[16]);
+  return HOMEKIT_BOOL(port_state[10]);
 }
 
+homekit_value_t switch_11_on_get() {
+  return HOMEKIT_BOOL(port_state[11]);
+}
 
-homekit_characteristic_t switch_1_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
-  .getter=switch_1_on_get,
-  .setter=switch_1_on_set
-);
+homekit_value_t switch_12_on_get() {
+  return HOMEKIT_BOOL(port_state[12]);
+}
 
-homekit_characteristic_t switch_2_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
-  .getter=switch_2_on_get,
-  .setter=switch_2_on_set
-);
+homekit_value_t switch_13_on_get() {
+  return HOMEKIT_BOOL(port_state[13]);
+}
 
-homekit_characteristic_t switch_3_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
-  .getter=switch_3_on_get,
-  .setter=switch_3_on_set
-);
+homekit_value_t switch_14_on_get() {
+  return HOMEKIT_BOOL(port_state[14]);
+}
 
-homekit_characteristic_t switch_4_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
-  .getter=switch_4_on_get,
-  .setter=switch_4_on_set
-);
+homekit_value_t switch_15_on_get() {
+  return HOMEKIT_BOOL(port_state[15]);
+}
 
-homekit_characteristic_t switch_5_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
-  .getter=switch_5_on_get,
-  .setter=switch_5_on_set
-);
 
 homekit_characteristic_t switch_6_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
   .getter=switch_6_on_get,
@@ -260,6 +235,31 @@ homekit_characteristic_t switch_10_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
   .setter=switch_10_on_set
 );
 
+homekit_characteristic_t switch_11_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
+  .getter=switch_11_on_get,
+  .setter=switch_11_on_set
+);
+
+homekit_characteristic_t switch_12_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
+  .getter=switch_12_on_get,
+  .setter=switch_12_on_set
+);
+
+homekit_characteristic_t switch_13_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
+  .getter=switch_13_on_get,
+  .setter=switch_13_on_set
+);
+
+homekit_characteristic_t switch_14_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
+  .getter=switch_14_on_get,
+  .setter=switch_14_on_set
+);
+
+homekit_characteristic_t switch_15_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
+  .getter=switch_15_on_get,
+  .setter=switch_15_on_set
+);
+
 void change_switch_state(uint8_t port) {
   update_switch(port, port_state[port] == 0 ? 1 : 0);
 }
@@ -270,62 +270,62 @@ void update_switch(uint8_t port, uint8_t state) {
   switch (port) {
   case 6:
     if(trigger) {
-      switch_1_changed.value = HOMEKIT_BOOL(state);
-      homekit_characteristic_notify(&switch_1_changed,  HOMEKIT_BOOL(state));
-    }
-    break;
-  case 7:
-    if(trigger) {
-      switch_2_changed.value = HOMEKIT_BOOL(state);
-      homekit_characteristic_notify(&switch_2_changed,  HOMEKIT_BOOL(state));
-    }
-    break;
-  case 8:
-    if(trigger) {
-      switch_3_changed.value = HOMEKIT_BOOL(state);
-      homekit_characteristic_notify(&switch_3_changed,  HOMEKIT_BOOL(state));
-    }
-    break;
-  case 9:
-    if(trigger) {
-      switch_4_changed.value = HOMEKIT_BOOL(state);
-      homekit_characteristic_notify(&switch_4_changed,  HOMEKIT_BOOL(state));
-    }
-    break;
-  case 10:
-    if(trigger) {
-      switch_5_changed.value = HOMEKIT_BOOL(state);
-      homekit_characteristic_notify(&switch_5_changed,  HOMEKIT_BOOL(state));
-    }
-    break;
-  case 11:
-    if(trigger) {
       switch_6_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_6_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 12:
+  case 7:
     if(trigger) {
       switch_7_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_7_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 13:
+  case 8:
     if(trigger) {
       switch_8_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_8_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 14:
+  case 9:
     if(trigger) {
       switch_9_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_9_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 15:
+  case 10:
     if(trigger) {
       switch_10_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_10_changed,  HOMEKIT_BOOL(state));
+    }
+    break;
+  case 11:
+    if(trigger) {
+      switch_11_changed.value = HOMEKIT_BOOL(state);
+      homekit_characteristic_notify(&switch_11_changed,  HOMEKIT_BOOL(state));
+    }
+    break;
+  case 12:
+    if(trigger) {
+      switch_12_changed.value = HOMEKIT_BOOL(state);
+      homekit_characteristic_notify(&switch_12_changed,  HOMEKIT_BOOL(state));
+    }
+    break;
+  case 13:
+    if(trigger) {
+      switch_13_changed.value = HOMEKIT_BOOL(state);
+      homekit_characteristic_notify(&switch_13_changed,  HOMEKIT_BOOL(state));
+    }
+    break;
+  case 14:
+    if(trigger) {
+      switch_14_changed.value = HOMEKIT_BOOL(state);
+      homekit_characteristic_notify(&switch_14_changed,  HOMEKIT_BOOL(state));
+    }
+    break;
+  case 15:
+    if(trigger) {
+      switch_15_changed.value = HOMEKIT_BOOL(state);
+      homekit_characteristic_notify(&switch_15_changed,  HOMEKIT_BOOL(state));
     }
     break;
 
@@ -459,7 +459,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {            
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 1"),
-            &switch_1_changed,
+            &switch_6_changed,
             NULL
         }),
         NULL
@@ -472,7 +472,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 2"),
-            &switch_2_changed,
+            &switch_7_changed,
             NULL
         }),
         NULL
@@ -485,7 +485,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 3"),
-            &switch_3_changed,
+            &switch_8_changed,
             NULL
         }),
         NULL
@@ -498,7 +498,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 4"),
-            &switch_4_changed,
+            &switch_9_changed,
             NULL
         }),
         NULL
@@ -511,7 +511,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 5"),
-            &switch_5_changed,
+            &switch_10_changed,
             NULL
         }),
         NULL
@@ -524,7 +524,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 6"),
-            &switch_6_changed,
+            &switch_11_changed,
             NULL
         }),
         NULL
@@ -537,7 +537,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 7"),
-            &switch_7_changed,
+            &switch_12_changed,
             NULL
         }),
         NULL
@@ -550,7 +550,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 8"),
-            &switch_8_changed,
+            &switch_13_changed,
             NULL
         }),
         NULL
@@ -563,7 +563,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 9"),
-            &switch_9_changed,
+            &switch_14_changed,
             NULL
         }),
         NULL
@@ -576,7 +576,7 @@ homekit_accessory_t *accessories[] = {
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switch 10"),
-            &switch_10_changed,
+            &switch_15_changed,
             NULL
         }),
         NULL
