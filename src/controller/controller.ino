@@ -6,24 +6,23 @@
 #include <DNSServer.h>
 #include <WiFiManager.h>
 
-#define PIN_BUTTON 0
+#define PIN_BUTTON D5
 
-#define MUX_S0 13
-#define MUX_S1 12
-#define MUX_S2 14
-#define MUX_S3 4
+#define MUX_S0 D0
+#define MUX_S1 D1
+#define MUX_S2 D2
+#define MUX_S3 D3
 
 extern "C" homekit_server_config_t config;
 extern "C" void accessory_init();
-extern "C" void update_switch(uint8_t port, uint8_t state);
+extern "C" void change_switch_state(uint8_t port);
 extern "C" void update_motion_sensor(uint8_t port, uint8_t state);
 
-static uint8_t  motion_sensor_states[6] = { 0, 0, 0, 0, 0, 0 };
-static uint8_t  switch_states[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-static int mux_control_pin[] = {MUX_S0, MUX_S1, MUX_S2, MUX_S3};
-
-static int mux_channel[16][4]={
+static uint8_t  port_state[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static uint8_t  last_channel_read = 0;
+static uint8_t  mux_control_pin[] = {MUX_S0, MUX_S1, MUX_S2, MUX_S3};
+static uint8_t  mux_channel[16][4]={
     {0,0,0,0}, //channel 0
     {1,0,0,0}, //channel 1
     {0,1,0,0}, //channel 2
@@ -48,9 +47,6 @@ static uint32_t next_motion_sensors_check_millis = 0;
 static bool     last_wifi_state = false;
 static uint8_t  wifi_connection_errors = 1;
 
-
-
-
 WiFiManager wifiManager;
 
 //----------------------------------
@@ -69,12 +65,18 @@ void setup() {
   digitalWrite(MUX_S2, LOW);
   digitalWrite(MUX_S3, LOW);
 
+  // Initialize switch states
+  for(uint8_t i = 6; i < 16; i++){
+    port_state[i] = read_mux(i);
+    delay(25);
+  }
+
   wifiManager.setConfigPortalTimeout(120);
   if(!wifiManager.autoConnect("Rancho P&R - Smart Sensor")) {
       printf("Failed to connect and hit timeout");
       ESP.restart();
   }
-
+  
   last_wifi_state = true;
 
   // Setup the reset switch button
@@ -82,15 +84,6 @@ void setup() {
   ESPButton.add(0, PIN_BUTTON, LOW, true, true);
   ESPButton.setCallback([&](uint8_t id, ESPButtonEvent event) {
     printf("Button %d Event: %s\n", id, ESPButton.getButtonEventDescription(event));
-
-    if (event == ESPBUTTONEVENT_SINGLECLICK) {
-      update_switch(7, 1);
-    }
-
-     if (event == ESPBUTTONEVENT_DOUBLECLICK) {
-      update_switch(7, 0);
-    }
-
     if (event == ESPBUTTONEVENT_LONGCLICK) {
       printf("Cleanning and rebooting...\n");
       wifiManager.resetSettings();
@@ -131,24 +124,15 @@ void loop() {
     }
   }
 
-  for (uint8_t i = 0; i < 16; i++) {
-//    printf("Port %d content: %d.\n", i+1, read_mux(i));
-//    read_mux(i);
-//    int port_content = readMux(i);
-//     int port_content = readMux(i);
-//    // Motion Sensor
-//    if( i <= 5) {
-//      int state = motion_sensor_state(port_content);
-//      if(motion_sensor_states[i] != state) {
-//        update_motion_sensor(i, state);
-//        motion_sensor_states[i] = state;
-//      }
-//    }
-  }
-
   if (t > next_heap_millis) {
     next_heap_millis = t + 1800 * 1000;
     printf("Free heap: %d, HomeKit clients: %d\n", ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
+  }
+
+  // Precisa de um intervalo pois sem o wifi buga
+  if (t > next_motion_sensors_check_millis) {
+    next_motion_sensors_check_millis = t + 25;
+    read_sensors_loop();
   }
 
   ESPButton.loop();
@@ -156,10 +140,37 @@ void loop() {
 }
 
 
-int read_mux(int channel){
-  for(int i = 0; i < 4; i ++){
-    digitalWrite(mux_control_pin[i], mux_channel[channel][i]);
+// Interact with one port each loop;
+void read_sensors_loop() {
+  if(last_channel_read == 16) {
+    last_channel_read = 0;
   }
+
+  int port_content = read_mux(last_channel_read);
+  int state = motion_sensor_state(port_content);
+
+  // Motion Sensor
+  if( last_channel_read <= 5) {
+    update_motion_sensor(last_channel_read, state);
+  }
+
+  //  Switches
+  if( last_channel_read > 5) {
+    if(port_state[last_channel_read] != state) {
+      port_state[last_channel_read] = state;
+      printf("Port %d state changed\n", last_channel_read);
+      change_switch_state(last_channel_read);
+    }
+  }
+
+  last_channel_read++;
+}
+
+int read_mux(int channel){
+  digitalWrite(MUX_S0, mux_channel[channel][0]);
+  digitalWrite(MUX_S1, mux_channel[channel][1]);
+  digitalWrite(MUX_S2, mux_channel[channel][2]);
+  digitalWrite(MUX_S3, mux_channel[channel][3]);
   return analogRead(A0);
 }
 

@@ -13,6 +13,12 @@ static uint8_t port_state[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 //--------------------------------
 // MOTION SENSORS
 //--------------------------------
+homekit_characteristic_t motion_sensor_0_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
+homekit_characteristic_t motion_sensor_1_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
+homekit_characteristic_t motion_sensor_2_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
+homekit_characteristic_t motion_sensor_3_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
+homekit_characteristic_t motion_sensor_4_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
+homekit_characteristic_t motion_sensor_5_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
 
 bool update_motion_sensor_state_and_check_diff(uint8_t port, uint8_t state) {
   if(port_state[port] == state) {
@@ -23,18 +29,17 @@ bool update_motion_sensor_state_and_check_diff(uint8_t port, uint8_t state) {
   }
 }
 
-homekit_characteristic_t motion_sensor_1_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
-homekit_characteristic_t motion_sensor_2_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
-homekit_characteristic_t motion_sensor_3_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
-homekit_characteristic_t motion_sensor_4_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
-homekit_characteristic_t motion_sensor_5_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
-homekit_characteristic_t motion_sensor_6_detected  = HOMEKIT_CHARACTERISTIC_(MOTION_DETECTED, false);
-
 void update_motion_sensor(uint8_t port, uint8_t state) {
   bool trigger = update_motion_sensor_state_and_check_diff(port, state);
   
   switch (port)
   {
+  case 0:
+    if(trigger) {
+      motion_sensor_0_detected.value = HOMEKIT_BOOL(state);
+      homekit_characteristic_notify(&motion_sensor_0_detected, HOMEKIT_BOOL(state));
+    }
+    break;
   case 1:
     if(trigger) {
       motion_sensor_1_detected.value = HOMEKIT_BOOL(state);
@@ -65,12 +70,6 @@ void update_motion_sensor(uint8_t port, uint8_t state) {
       homekit_characteristic_notify(&motion_sensor_5_detected, HOMEKIT_BOOL(state));
     }
     break;
-  case 6:
-    if(trigger) {
-      motion_sensor_6_detected.value = HOMEKIT_BOOL(state);
-      homekit_characteristic_notify(&motion_sensor_6_detected, HOMEKIT_BOOL(state));
-    }
-    break;
   default:
     break;
   }
@@ -94,7 +93,7 @@ void switch_1_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(7, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(6, value.bool_value ? 1 : 0);
 }
 
 void switch_2_on_set(homekit_value_t value) {
@@ -102,7 +101,7 @@ void switch_2_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(8, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(7, value.bool_value ? 1 : 0);
 }
 
 void switch_3_on_set(homekit_value_t value) {
@@ -110,7 +109,7 @@ void switch_3_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(9, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(8, value.bool_value ? 1 : 0);
 }
 
 void switch_4_on_set(homekit_value_t value) {
@@ -118,7 +117,7 @@ void switch_4_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(10, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(9, value.bool_value ? 1 : 0);
 }
 
 void switch_5_on_set(homekit_value_t value) {
@@ -126,7 +125,7 @@ void switch_5_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(11, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(10, value.bool_value ? 1 : 0);
 }
 
 void switch_6_on_set(homekit_value_t value) {
@@ -134,7 +133,7 @@ void switch_6_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(12, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(11, value.bool_value ? 1 : 0);
 }
 
 void switch_7_on_set(homekit_value_t value) {
@@ -142,7 +141,7 @@ void switch_7_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(13, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(12, value.bool_value ? 1 : 0);
 }
 
 void switch_8_on_set(homekit_value_t value) {
@@ -150,7 +149,7 @@ void switch_8_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(14, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(13, value.bool_value ? 1 : 0);
 }
 
 void switch_9_on_set(homekit_value_t value) {
@@ -158,7 +157,7 @@ void switch_9_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(15, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(14, value.bool_value ? 1 : 0);
 }
 
 void switch_10_on_set(homekit_value_t value) {
@@ -166,7 +165,7 @@ void switch_10_on_set(homekit_value_t value) {
     printf("Invalid on-value format: %d\n", value.format);
     return;
   }
-  update_switch_state_and_check_diff(16, value.bool_value ? 1 : 0);
+  update_switch_state_and_check_diff(15, value.bool_value ? 1 : 0);
 }
 
 
@@ -261,66 +260,69 @@ homekit_characteristic_t switch_10_changed = HOMEKIT_CHARACTERISTIC_(ON, false,
   .setter=switch_10_on_set
 );
 
+void change_switch_state(uint8_t port) {
+  update_switch(port, port_state[port] == 0 ? 1 : 0);
+}
 
 void update_switch(uint8_t port, uint8_t state) {
   bool trigger = update_switch_state_and_check_diff(port, state);
-  
+
   switch (port) {
-  case 7:
+  case 6:
     if(trigger) {
       switch_1_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_1_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 8:
+  case 7:
     if(trigger) {
       switch_2_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_2_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 9:
+  case 8:
     if(trigger) {
       switch_3_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_3_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 10:
+  case 9:
     if(trigger) {
       switch_4_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_4_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 11:
+  case 10:
     if(trigger) {
       switch_5_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_5_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 12:
+  case 11:
     if(trigger) {
       switch_6_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_6_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 13:
+  case 12:
     if(trigger) {
       switch_7_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_7_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 14:
+  case 13:
     if(trigger) {
       switch_8_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_8_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 15:
+  case 14:
     if(trigger) {
       switch_9_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_9_changed,  HOMEKIT_BOOL(state));
     }
     break;
-  case 16:
+  case 15:
     if(trigger) {
       switch_10_changed.value = HOMEKIT_BOOL(state);
       homekit_characteristic_notify(&switch_10_changed,  HOMEKIT_BOOL(state));
@@ -378,7 +380,7 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(MOTION_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-            &motion_sensor_1_detected,
+            &motion_sensor_0_detected,
             HOMEKIT_CHARACTERISTIC(NAME, "Motion sensor 1"),
             NULL
         }),
@@ -391,7 +393,7 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(MOTION_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-            &motion_sensor_2_detected,
+            &motion_sensor_1_detected,
             HOMEKIT_CHARACTERISTIC(NAME, "Motion sensor 2"),
             NULL
         }),
@@ -404,7 +406,7 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(MOTION_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-            &motion_sensor_3_detected,
+            &motion_sensor_2_detected,
             HOMEKIT_CHARACTERISTIC(NAME, "Motion sensor 3"),
             NULL
         }),
@@ -417,7 +419,7 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(MOTION_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-            &motion_sensor_4_detected,
+            &motion_sensor_3_detected,
             HOMEKIT_CHARACTERISTIC(NAME, "Motion sensor 4"),
             NULL
         }),
@@ -430,7 +432,7 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(MOTION_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-            &motion_sensor_5_detected,
+            &motion_sensor_4_detected,
             HOMEKIT_CHARACTERISTIC(NAME, "Motion sensor 5"),
             NULL
         }),
@@ -443,13 +445,12 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(MOTION_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-            &motion_sensor_6_detected,
+            &motion_sensor_5_detected,
             HOMEKIT_CHARACTERISTIC(NAME, "Motion sensor 6"),
             NULL
         }),
         NULL
     }),
-    
     HOMEKIT_ACCESSORY(.id=8, .category=homekit_accessory_category_lightbulb, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Smart Switch 1"),
