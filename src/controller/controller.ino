@@ -22,24 +22,24 @@ extern "C" void update_motion_sensor(uint8_t port, uint8_t state);
 static uint8_t  port_state[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static uint8_t  last_channel_read = 0;
 static uint8_t  mux_control_pin[] = {MUX_S0, MUX_S1, MUX_S2, MUX_S3};
-static uint8_t  mux_channel[16][4]={
-    {0,0,0,0}, //channel 0
-    {1,0,0,0}, //channel 1
-    {0,1,0,0}, //channel 2
-    {1,1,0,0}, //channel 3
-    {0,0,1,0}, //channel 4
-    {1,0,1,0}, //channel 5
-    {0,1,1,0}, //channel 6
-    {1,1,1,0}, //channel 7
-    {0,0,0,1}, //channel 8
-    {1,0,0,1}, //channel 9
-    {0,1,0,1}, //channel 10
-    {1,1,0,1}, //channel 11
-    {0,0,1,1}, //channel 12
-    {1,0,1,1}, //channel 13
-    {0,1,1,1}, //channel 14
-    {1,1,1,1}  //channel 15
-  };
+static uint8_t  mux_channel[16][4] = {
+  {0, 0, 0, 0}, //channel 0
+  {1, 0, 0, 0}, //channel 1
+  {0, 1, 0, 0}, //channel 2
+  {1, 1, 0, 0}, //channel 3
+  {0, 0, 1, 0}, //channel 4
+  {1, 0, 1, 0}, //channel 5
+  {0, 1, 1, 0}, //channel 6
+  {1, 1, 1, 0}, //channel 7
+  {0, 0, 0, 1}, //channel 8
+  {1, 0, 0, 1}, //channel 9
+  {0, 1, 0, 1}, //channel 10
+  {1, 1, 0, 1}, //channel 11
+  {0, 0, 1, 1}, //channel 12
+  {1, 0, 1, 1}, //channel 13
+  {0, 1, 1, 1}, //channel 14
+  {1, 1, 1, 1} //channel 15
+};
 
 static uint32_t next_heap_millis = 0;
 static uint32_t next_wifi_check_millis = 0;
@@ -66,17 +66,17 @@ void setup() {
   digitalWrite(MUX_S3, LOW);
 
   // Initialize switch states
-  for(uint8_t i = 6; i < 16; i++){
+  for (uint8_t i = 6; i < 16; i++) {
     port_state[i] = read_mux(i);
     delay(25);
   }
 
   wifiManager.setConfigPortalTimeout(120);
-  if(!wifiManager.autoConnect("Rancho P&R - Smart Sensor")) {
-      printf("Failed to connect and hit timeout");
-      ESP.restart();
+  if (!wifiManager.autoConnect("Rancho P&R - Smart Sensor")) {
+    printf("Failed to connect and hit timeout");
+    ESP.restart();
   }
-  
+
   last_wifi_state = true;
 
   // Setup the reset switch button
@@ -103,22 +103,21 @@ void setup() {
 }
 
 void loop() {
-  const uint32_t t = millis();
-
+  const uint32_t t = millis();  
   if (t > next_wifi_check_millis) {
     next_wifi_check_millis = t + 10 * 1000;
 
     // Verifica se a conexao esta ativa
-    if(WiFi.status() != WL_CONNECTED) {
+    if (WiFi.status() != WL_CONNECTED) {
       last_wifi_state = false;
-      if(wifi_connection_errors <= 10) {
+      if (wifi_connection_errors <= 10) {
         printf("Waiting wifi connection: %d/10.\n", wifi_connection_errors);
         wifi_connection_errors++;
       } else {
         printf("Wifi connection fail, restarting...\n");
         ESP.restart();
-      }      
-    } else if (last_wifi_state == false){
+      }
+    } else if (last_wifi_state == false) {
       printf("Wifi connection reestablished, restarting...\n");
       ESP.restart();
     }
@@ -137,12 +136,13 @@ void loop() {
 
   ESPButton.loop();
   arduino_homekit_loop();
+  delay(10);
 }
 
 
 // Interact with one port each loop;
 void read_sensors_loop() {
-  if(last_channel_read == 16) {
+  if (last_channel_read == 16) {
     last_channel_read = 0;
   }
 
@@ -150,13 +150,13 @@ void read_sensors_loop() {
   int state = motion_sensor_state(port_content);
 
   // Motion Sensor
-  if( last_channel_read <= 5) {
+  if ( last_channel_read <= 5) {
     update_motion_sensor(last_channel_read, state);
   }
 
   //  Switches
-  if( last_channel_read > 5) {
-    if(port_state[last_channel_read] != state) {
+  if ( last_channel_read > 5) {
+    if (port_state[last_channel_read] != state) {
       port_state[last_channel_read] = state;
       printf("Port %d state changed\n", last_channel_read);
       change_switch_state(last_channel_read);
@@ -166,7 +166,7 @@ void read_sensors_loop() {
   last_channel_read++;
 }
 
-int read_mux(int channel){
+int read_mux(int channel) {
   digitalWrite(MUX_S0, mux_channel[channel][0]);
   digitalWrite(MUX_S1, mux_channel[channel][1]);
   digitalWrite(MUX_S2, mux_channel[channel][2]);
@@ -175,7 +175,7 @@ int read_mux(int channel){
 }
 
 int motion_sensor_state(int val) {
-  if( val > 512) {
+  if ( val > 512) {
     return 0;
   } else {
     return 1;
